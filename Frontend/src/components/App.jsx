@@ -7,26 +7,41 @@ import CreateArea from "./CreateArea";
 
 
 function App() {
-  const [notes, changeNotes] = React.useState([
-    {
-      title: "Note title",
-      content: "Note content"
-    }
-  ]);
+  const [notes, changeNotes] = React.useState([]);
   
-  async function post(){
+  React.useEffect(() => {
+    fetch('http://localhost:4000/getNotes')
+      .then((res) => res.json())
+      .then((jsonRes) => {
+        if(jsonRes.length>0){
+          changeNotes(jsonRes)
+        }
+      })
+  }, [])
+
+  async function postAllNotes(){
     try{
-      await axios.post("http://localhost:4000/post" , {
+      await axios.post("http://localhost:4000/postAllNotes" , {
         notes
       })
     }catch(error){
       console.log(error);
     }
   }
+
+  async function postNote(obj){
+    try{
+      await axios.post("http://localhost:4000/postNote" , {
+        obj
+      })
+    }catch(error){
+      console.log(error);
+    }
+  }
   
-  React.useEffect(()=>{
-    post();
-  },[notes]);
+  // React.useEffect(()=>{
+  //   postAllNotes();
+  // },[notes]);
   
 
   function addToNotes(t, c) {
@@ -39,7 +54,10 @@ function App() {
         }
       ];
     });
-  
+    postNote({
+      title:t,
+      content:c
+    })
   }
 
   function deleteNote(id) {
