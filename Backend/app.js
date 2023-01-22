@@ -11,6 +11,7 @@ mongoose.set('strictQuery', false);
 mongoose.connect("mongodb://localhost:27017/keeperDB",{useNewURLParser:true});
 
 const noteSchema = new mongoose.Schema({
+    id : Number,
     title : String,
     content : String
 });
@@ -23,11 +24,9 @@ app.get("/getNotes",(req,res)=>{
     })
 })
 
-app.post("/postAllNotes",(req,res)=>{
-    console.log(req.body);
-});
 
 app.post("/postNote", (req,res) => {
+    console.log(req.body.obj);
     Note_model.create(req.body.obj);
 });
 
@@ -35,6 +34,10 @@ app.post("/signup", (req,res) =>{
     console.log(req.body);
 });
 
+app.post("/deleteANote",(req,res)=>{
+    id=req.body.obj.id;
+    
+});
 app.listen(4000,()=>{
     console.log("Listening on 4000");
 })
