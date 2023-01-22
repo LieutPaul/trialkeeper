@@ -32,7 +32,7 @@ function CreateArea(props) {
             } else {
               changeContent("");
               changeTitle("");
-              props.onSubmit(title, content);
+              props.onSubmit(title, content, props.id);
             }
           }}
         >

@@ -8,6 +8,7 @@ import CreateArea from "./CreateArea";
 
 function App() {
   const [notes, changeNotes] = React.useState([]);
+  const [note_id,change_note_id] = React.useState(0);
   
   React.useEffect(() => {
     fetch('http://localhost:4000/getNotes')
@@ -15,14 +16,16 @@ function App() {
       .then((jsonRes) => {
         if(jsonRes.length>0){
           changeNotes(jsonRes)
+          change_note_id(jsonRes.length)
         }
       })
   }, [])
 
-  async function postAllNotes(){
+  async function deleteANote(id){
+    const obj={id:id}
     try{
-      await axios.post("http://localhost:4000/postAllNotes" , {
-        notes
+      await axios.post("http://localhost:4000/deleteANote" , {
+        obj
       })
     }catch(error){
       console.log(error);
@@ -38,13 +41,8 @@ function App() {
       console.log(error);
     }
   }
-  
-  // React.useEffect(()=>{
-  //   postAllNotes();
-  // },[notes]);
-  
 
-  function addToNotes(t, c) {
+  function addToNotes(t,c,id) {
     changeNotes((prevValue) => {
       return [
         ...prevValue,
@@ -54,7 +52,9 @@ function App() {
         }
       ];
     });
+    change_note_id(note_id+1);
     postNote({
+      id:id,
       title:t,
       content:c
     })
@@ -66,13 +66,13 @@ function App() {
         return index !== id;
       });
     });
+    deleteANote(id);
   }
 
   return (
     <div>
-      
       <Header />
-      <CreateArea onSubmit={addToNotes} />
+      <CreateArea onSubmit={addToNotes} id={note_id} />
       {notes.map((note, index) => (
         <Note
           id={index}
@@ -83,8 +83,6 @@ function App() {
         />
       ))}
       <Footer />
-    
-    
     </div>
   );
 }
