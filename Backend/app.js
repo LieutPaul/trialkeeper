@@ -11,7 +11,7 @@ mongoose.set('strictQuery', false);
 mongoose.connect("mongodb://localhost:27017/keeperDB",{useNewURLParser:true});
 
 const noteSchema = new mongoose.Schema({
-    id : Number,
+    note_id : Number,
     title : String,
     content : String
 });
@@ -35,7 +35,15 @@ app.post("/signup", (req,res) =>{
 });
 
 app.post("/deleteANote",(req,res)=>{
-    id=req.body.obj.id;
+    noteid=req.body.obj.id;
+    console.log(noteid);
+    Note_model.findOneAndDelete({note_id:noteid},(err,docs)=>{
+        if(err){
+            console.log(err);
+        }else{
+            console.log(docs);
+        }
+    })
     
 });
 app.listen(4000,()=>{

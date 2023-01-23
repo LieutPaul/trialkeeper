@@ -23,6 +23,7 @@ function App() {
 
   async function deleteANote(id){
     const obj={id:id}
+    change_note_id(note_id-1)
     try{
       await axios.post("http://localhost:4000/deleteANote" , {
         obj
@@ -54,7 +55,7 @@ function App() {
     });
     change_note_id(note_id+1);
     postNote({
-      id:id,
+      note_id:id,
       title:t,
       content:c
     })
