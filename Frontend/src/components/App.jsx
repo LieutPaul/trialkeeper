@@ -16,14 +16,20 @@ function App() {
       .then((jsonRes) => {
         if(jsonRes.length>0){
           changeNotes(jsonRes)
-          change_note_id(jsonRes.length)
+          var max_id=0;
+          for(var i=0;i<jsonRes.length;i++){
+            if(jsonRes[i].note_id>max_id){
+              max_id=jsonRes[i].note_id;
+            }
+          }
+          // The first new note will have an ID one more than the max id of previous notes.
+          change_note_id(max_id+1);
         }
       })
   }, [])
 
   async function deleteANote(id){
     const obj={id:id}
-    change_note_id(note_id-1)
     try{
       await axios.post("http://localhost:4000/deleteANote" , {
         obj
@@ -64,7 +70,7 @@ function App() {
   function deleteNote(id) {
     changeNotes((prevItems) => {
       return prevItems.filter((item, index) => {
-        return index !== id;
+        return (item.note_id) !== id;
       });
     });
     deleteANote(id);
@@ -76,7 +82,7 @@ function App() {
       <CreateArea onSubmit={addToNotes} id={note_id} />
       {notes.map((note, index) => (
         <Note
-          id={index}
+          id={note.note_id}
           key={index}
           title={note.title}
           content={note.content}
