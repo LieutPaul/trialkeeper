@@ -59,6 +59,7 @@ function App() {
         }
       ];
     });
+    
     change_note_id(note_id+1);
     postNote({
       note_id:id,
