@@ -6,19 +6,22 @@ function SignUpPage(){
     async function post(){
         const obj={
             username:username,
-            passsword:passsword
+            password:password
         }
         try{
-            await axios.post("http://localhost:4000/signup" , {
+            const response = await axios.post("http://localhost:4000/signup" , {
                 obj
-            })
+            });
+            if(response==="UserExists"){
+                console.log("User Already Exists")
+            }
         }catch(error){
             console.log(error);
         }
     }
     
     const [username, changeUsername] = React.useState(""); //Can change to useRef
-    const [passsword, changePassword] = React.useState("");
+    const [password, changePassword] = React.useState("");
     
     return (
         <>
@@ -30,7 +33,6 @@ function SignUpPage(){
                     <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" onChange={(event)=>{
                         changeUsername(event.target.value);
                     }}/>
-                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
                 </div>
                 <div class="form-group">
                     <label for="exampleInputPassword1">Password</label>
