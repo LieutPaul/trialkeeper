@@ -40,8 +40,6 @@ passport.use(User_model.createStrategy());
 passport.serializeUser(User_model.serializeUser());
 passport.deserializeUser(User_model.deserializeUser());
 
-const Note_model = new mongoose.model("Note",noteSchema);
-
 app.get("/getNotes",(req,res)=>{
     Note_model.find({},(err,notes)=>{
         res.send(notes)

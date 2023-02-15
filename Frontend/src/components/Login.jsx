@@ -1,21 +1,17 @@
-import React from "react";
+import React from 'react'
 import Header from "./Header";
 import axios from 'axios'
-import {Link} from "react-router-dom";
-function SignUpPage(){
 
+export default function LoginPage() {
     async function post(){
         const obj={
             username:username,
             password:password
         }
         try{
-            const response = await axios.post("http://localhost:4000/signup" , {
+            await axios.post("http://localhost:4000/login" , {
                 obj
             });
-            if(response==="UserExists"){
-                console.log("User Already Exists")
-            }
         }catch(error){
             console.log(error);
         }
@@ -30,7 +26,7 @@ function SignUpPage(){
             <form>
                 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous"></link>
                 <div style={{"textAlign":"center"}}>
-                    <h1>Register</h1>
+                    <h1>Login</h1>
                 </div>
                 <div class="form-group">
                     <label for="exampleInputEmail1">Email address</label>
@@ -44,11 +40,6 @@ function SignUpPage(){
                         changePassword(event.target.value);
                     }}/>
                 </div>
-                <small class="form-text text-muted">Already Registered? Login 
-                <Link  style={{
-                    cursor: "pointer"
-                }}to="/login"> Here.</Link>
-                </small>
             </form>
             <div style={{textAlign: "center"}}>
                 <button type="submit" class="btn btn-primary" onClick={(event)=>{
@@ -59,5 +50,3 @@ function SignUpPage(){
         </>
     )
 }
-
-export default SignUpPage;
