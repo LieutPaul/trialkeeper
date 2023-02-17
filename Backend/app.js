@@ -27,6 +27,26 @@ const UserSchema = new mongoose.Schema({
 
 const User_model = new mongoose.model("User",UserSchema);
 
+
+function authenticateToken(req,res,next) { //MiddleWare to check if token is valid
+    //Header - Bearer TOKEN
+    const authHeader = req.headers['authorization']
+    const token = authHeader && authHeader.split(' ')[1];
+    if(token==null){
+        return res.sendStatus(401);
+    }
+
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err,user)=>{
+        if(err){
+            res.sendStatus(403); //Invalid Token => No Access
+        }
+        req.user = user;
+        // console.log(user);
+        next();
+    })
+}
+
+
 app.post("/signup", (req,res) =>{
     console.log(req.body);
     const userFromFrontEnd = req.body.obj;
