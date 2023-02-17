@@ -40,44 +40,41 @@ passport.use(User_model.createStrategy());
 passport.serializeUser(User_model.serializeUser());
 passport.deserializeUser(User_model.deserializeUser());
 
-app.get("/getNotes",(req,res)=>{
-    Note_model.find({},(err,notes)=>{
-        res.send(notes)
+
+
+app.post("/signup", (req,res) =>{
+    console.log(req.body);
+    const userFromFrontEnd = req.body.obj;
+    User_model.register(({username: userFromFrontEnd.username}), userFromFrontEnd.password, (err, user) => {
+        if(err) {
+            console.log(err);
+            res.send(false);
+        }else{
+            res.send("true");
+            passport.authenticate('local')(req, res, () => {
+            })
+            
+        }
     })
+});
+
+app.post("/login", (req,res)=>{
+    console.log(req.body.obj);
+})
+
+
+app.get("/getNotes",(req,res)=>{
 })
 
 
 app.post("/postNote", (req,res) => {
     console.log(req.body.obj);
-    Note_model.create(req.body.obj);
 });
 
-app.post("/signup", (req,res) =>{
-    console.log(req.body);
-    const userFromFrontEnd = req.body.obj;
-    User_model.register({"username":userFromFrontEnd.username},userFromFrontEnd.password,function(err,user){
-        if(err){
-            console.log(err);
-            res.send("UserExists")
-        }else{
-            passport.authenticate("local",{failureRedirect:'/signuperror',failureMessage: true })(req,res,function(){
-                console.log("User Added successfully");
-                // res.redirect("/");
-            });
-        }
-    });
-});
 
 app.post("/deleteANote",(req,res)=>{
     noteid=req.body.obj.id;
     console.log(noteid);
-    Note_model.findOneAndDelete({note_id:noteid},(err,docs)=>{
-        if(err){
-            console.log(err);
-        }else{
-            console.log(docs);
-        }
-    })
     
 });
 app.listen(4000,()=>{
