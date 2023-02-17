@@ -1,14 +1,16 @@
 const express=require('express');
+const bodyParser = require("body-parser");
 const cors=require('cors');
 const mongoose=require('mongoose');
 const session = require('express-session')
 const passport=require("passport");
 const passportLocalMongoose=require("passport-local-mongoose");
 mongoose.set('strictQuery', false);
-mongoose.connect("mongodb://localhost:27017/keeperDB",{useNewURLParser:true});
 
 const app = express();
-app.use(express.urlencoded({extended:true}));
+
+// app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.urlencoded({extended:false}));
 app.use(express.json());
 app.use(cors());
 
@@ -20,6 +22,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+mongoose.connect("mongodb://localhost:27017/keeperDB",{useNewURLParser:true});
 
 const noteSchema = new mongoose.Schema({
     note_id : Number,
@@ -40,23 +43,26 @@ passport.use(User_model.createStrategy());
 passport.serializeUser(User_model.serializeUser());
 passport.deserializeUser(User_model.deserializeUser());
 
-
-
 app.post("/signup", (req,res) =>{
     console.log(req.body);
     const userFromFrontEnd = req.body.obj;
-    User_model.register(({username: userFromFrontEnd.username}), userFromFrontEnd.password, (err, user) => {
+    User_model.register({username: userFromFrontEnd.username}, userFromFrontEnd.password, (err, user) => {
         if(err) {
             console.log(err);
             res.send(false);
         }else{
-            passport.authenticate('local', (req, res) => {
-            })
-            res.send(true);
+            passport.authenticate("local",{failureRedirect:'/signuperror',failureMessage: true })(req,res,function(){
+                console.log("User Added successfully");
+                res.send(true);
+            });
         }
     })
 });
 
+app.get("/signuperror",(req,res)=>{
+    console.log("Inside signuperror")
+    res.send(false);
+})
 app.post("/login", (req,res)=>{
     console.log(req.body.obj);
 })
