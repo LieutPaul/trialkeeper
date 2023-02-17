@@ -19,13 +19,16 @@ function SignUpPage(){
             const response = await axios.post("http://localhost:4000/signup" , {
                 obj
             });
-            if(response.data===true){ 
-                changeSignUp(false);
-                console.log("User Added");
-                navigate("/");
-            }else{
+            if(response.data===false){ 
                 console.log("User Already Exists");
                 changeUserExists(true);
+            }else{
+                changeSignUp(false);
+                // (response.data).then(result => {
+                //     console.log(result);
+                // })
+                console.log(response.data) // Is the jwt token
+                navigate("/");
             }
         }catch(error){
             console.log(error);
