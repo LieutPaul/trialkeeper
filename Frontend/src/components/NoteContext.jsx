@@ -70,7 +70,8 @@ export const NotesProvider = ({children}) =>{
             deleteNote,
             signup,
             changeNotes,
-            change_note_id
+            change_note_id,
+            changeSignUp
         }}>
             {children}
         </NotesContext.Provider>
