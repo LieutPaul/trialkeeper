@@ -3,11 +3,13 @@ import Header from "./Header";
 import axios from 'axios'
 import {Link} from "react-router-dom";
 import {useNavigate} from "react-router-dom"
+import { useNotes } from "./NoteContext";
 
 function SignUpPage(){
 
     const navigate = useNavigate();
-    
+
+    const {changeSignUp} = useNotes();
     async function post(){
         const obj={
             username:username,
@@ -17,12 +19,13 @@ function SignUpPage(){
             const response = await axios.post("http://localhost:4000/signup" , {
                 obj
             });
-            if(response.data===false){
-                console.log("User Already Exists");
-                changeUserExists(true);
-            }else{
+            if(response.data===true){ 
+                changeSignUp(false);
                 console.log("User Added");
                 navigate("/");
+            }else{
+                console.log("User Already Exists");
+                changeUserExists(true);
             }
         }catch(error){
             console.log(error);

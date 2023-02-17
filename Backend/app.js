@@ -50,10 +50,9 @@ app.post("/signup", (req,res) =>{
             console.log(err);
             res.send(false);
         }else{
-            res.send("true");
-            passport.authenticate('local')(req, res, () => {
+            passport.authenticate('local', (req, res) => {
             })
-            
+            res.send(true);
         }
     })
 });
@@ -64,6 +63,24 @@ app.post("/login", (req,res)=>{
 
 
 app.get("/getNotes",(req,res)=>{
+    if(req.isAuthenticated()){
+        console.log("authenticated.")
+        User_model.findOne({username : req.user.username},(err,foundUser)=>{
+            if(err){
+                console.log(err);
+            }else{
+                console.log(foundUser);
+                if(foundUser){
+                    res.send(foundUser)
+                }else{
+                    res.send({"as":"as"});
+                }
+            }
+        });
+    }else{
+        console.log("Not Authenticated.")
+        res.send({"as":"as"});
+    }
 })
 
 
