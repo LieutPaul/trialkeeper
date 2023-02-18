@@ -31,7 +31,6 @@ function App() {
       }
       
 
-      // console.log(obj.data)
           // if(jsonRes.length>0){
           //   changeNotes(jsonRes)
           //   var max_id=0;

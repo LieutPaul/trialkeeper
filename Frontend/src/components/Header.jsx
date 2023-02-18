@@ -1,10 +1,10 @@
 import React from "react";
 import {Link} from "react-router-dom";
 import { useNotes } from "./NoteContext";
-
+import { useNavigate } from "react-router-dom";
 export default function Header() {
-
-  const {signup} = useNotes();
+  const navigate = useNavigate();
+  const {signup,changeSignUp} = useNotes();
   return (
     <header>
       <Link  style={{
@@ -14,14 +14,18 @@ export default function Header() {
 
         {signup &&
           <Link  style={{
-            float:"right",
-            cursor: "pointer"
+            "float":"right",
+            "cursor": "pointer"
           }}to="/signup"><h1>SignUp</h1>
           </Link>
         }
 
         {!signup &&
-          <h1>Logout</h1>
+          <h1 style={{"float":"right","cursor": "pointer"}} onClick={()=>{
+            changeSignUp(true);
+            localStorage.removeItem("jwt")
+            navigate("/");
+          }}>Logout</h1>
         }
       
     </header>
