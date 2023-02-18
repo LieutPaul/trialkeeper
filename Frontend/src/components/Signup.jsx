@@ -24,10 +24,7 @@ function SignUpPage(){
                 changeUserExists(true);
             }else{
                 changeSignUp(false);
-                // (response.data).then(result => {
-                //     console.log(result);
-                // })
-                console.log(response.data) // Is the jwt token
+                localStorage.setItem("jwt",response.data);
                 navigate("/");
             }
         }catch(error){

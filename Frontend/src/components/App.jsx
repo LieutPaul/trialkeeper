@@ -6,22 +6,31 @@ import axios from 'axios'
 import CreateArea from "./CreateArea";
 import { useNotes } from "./NoteContext";
 
+const getNotes = async (jwt) =>{
+  const response = await axios.get("http://localhost:4000/getNotes",{
+    headers:{
+      'Authorization' : 'Bearer ' + jwt
+    }
+  });
+  // console.log(response.data);
+  return (response.data);
+}
 
 function App() {
 
   const {notes,change_note_id,changeNotes,signup,addToNotes,note_id,deleteNote,changeSignUp} = useNotes();
 
-    const getNotes = async () =>{
-      const response = await axios.get("http://localhost:4000/getNotes");
-      // console.log(response.data);
-      return (response.data);
-    }
-
     React.useEffect(()=>{
-      const obj = getNotes();
-      obj.then((result)=>{
-        console.log(result);
-      })
+
+      if(localStorage.getItem("jwt")!==null){
+        const obj = getNotes(localStorage.getItem("jwt"));
+        obj.then((result)=>{
+          console.log(result);
+        })
+        changeSignUp(false);
+      }
+      
+
       // console.log(obj.data)
           // if(jsonRes.length>0){
           //   changeNotes(jsonRes)
