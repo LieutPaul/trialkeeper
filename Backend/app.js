@@ -32,6 +32,7 @@ function authenticateToken(req,res,next) { //MiddleWare to check if token is val
     //Header - Bearer TOKEN
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1];
+    console.log("Token is "+token)
     if(token==null){
         return res.sendStatus(401);
     }
@@ -41,7 +42,6 @@ function authenticateToken(req,res,next) { //MiddleWare to check if token is val
             res.sendStatus(403); //Invalid Token => No Access
         }
         req.user = user;
-        console.log(user);
         next();
     })
 }
@@ -82,12 +82,13 @@ app.post("/login", (req,res)=>{
 
 
 app.get("/getNotes",authenticateToken,(req,res)=>{
-    res.send("Hello")
+    res.send(req.user)
 })
 
 
-app.post("/postNote", (req,res) => {
-    console.log(req.body.obj);
+app.get("/postNote", authenticateToken,(req,res) => {
+    console.log(req.body)
+    res.send("Added")
 });
 
 

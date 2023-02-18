@@ -11,6 +11,9 @@ export const NotesProvider = ({children}) =>{
     const [note_id,change_note_id] = React.useState(0);
     const [signup, changeSignUp] = React.useState(true);
 
+    function removesignup(){
+        changeSignUp(false)
+    }
     async function deleteANote(id){
         const obj={id:id}
         try{
@@ -22,34 +25,41 @@ export const NotesProvider = ({children}) =>{
         }
     }
     
-      async function postNote(obj){
+    async function postNote(obj){
+        console.log("Posting Note")
         try{
-            await axios.post("http://localhost:4000/postNote" , {
-                obj
+            const response = await axios.get("http://localhost:4000/postNote" , {
+                obj,
+                headers:{
+                    'Authorization' : 'Bearer ' + localStorage.getItem("jwt")
+                }
             })
         }catch(error){
             console.log(error);
         }
-      }
+    }
     
       function addToNotes(t,c,id) {
-        changeNotes((prevValue) => {
-            return [
-                ...prevValue,
-                {
-                    title: t,
-                    content: c
-                }
-            ];
-        });
-        
-        change_note_id(note_id+1);
-        
-        postNote({
-            note_id:id,
-            title:t,
-            content:c
-        })
+        if(localStorage.getItem("jwt")){
+            changeNotes((prevValue) => {
+                return [
+                    ...prevValue,
+                    {
+                        title: t,
+                        content: c
+                    }
+                ];
+            });
+            
+            change_note_id(note_id+1);
+            console.log("Adding to Notes")
+            postNote({
+                note_id:id,
+                title:t,
+                content:c
+            })
+        }
+
       }
     
       function deleteNote(id) {
@@ -71,7 +81,8 @@ export const NotesProvider = ({children}) =>{
             signup,
             changeNotes,
             change_note_id,
-            changeSignUp
+            changeSignUp,
+            removesignup
         }}>
             {children}
         </NotesContext.Provider>

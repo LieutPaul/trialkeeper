@@ -6,43 +6,35 @@ import axios from 'axios'
 import CreateArea from "./CreateArea";
 import { useNotes } from "./NoteContext";
 
-const getNotes = async (jwt) =>{
-  const response = await axios.get("http://localhost:4000/getNotes",{
-    headers:{
-      'Authorization' : 'Bearer ' + jwt
-    }
-  });
-  // console.log(response.data);
-  return (response.data);
-}
-
 function App() {
-
   const {notes,change_note_id,changeNotes,signup,addToNotes,note_id,deleteNote,changeSignUp} = useNotes();
-
-    React.useEffect(()=>{
-
-      if(localStorage.getItem("jwt")!==null){
-        const obj = getNotes(localStorage.getItem("jwt"));
-        obj.then((result)=>{
-          console.log(result);
-        })
+  
+  const getNotes = async () => {
+    if(localStorage.getItem("jwt")!==null){
+        const response = await axios.get("http://localhost:4000/getNotes",{
+          headers:{
+            'Authorization' : 'Bearer ' + localStorage.getItem("jwt")
+          }
+        });
+        const user=response.data.user;
         changeSignUp(false);
-      }
-      
+        var max_id=0;
+        if(user.notes.length>0){
+          changeNotes(user.notes)
+          for(var i=0;i<user.notes.length;i++){
+            if(user.notes[i].note_id>max_id){
+              max_id=user.notes[i].note_id;
+            }
+          }
+          // The first new note will have an ID one more than the max id of previous notes.
+        }
+        change_note_id(max_id+1);
+    }
+  }
+  React.useEffect(()=>{
+    getNotes();
+  },[])
 
-          // if(jsonRes.length>0){
-          //   changeNotes(jsonRes)
-          //   var max_id=0;
-          //   for(var i=0;i<jsonRes.length;i++){
-          //     if(jsonRes[i].note_id>max_id){
-          //       max_id=jsonRes[i].note_id;
-          //     }
-          //   }
-          //   // The first new note will have an ID one more than the max id of previous notes.
-          //   change_note_id(max_id+1);
-          // }
-    })
 
 
   return (
