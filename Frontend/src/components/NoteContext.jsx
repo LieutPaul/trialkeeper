@@ -7,13 +7,11 @@ export function useNotes(){
 }
 
 export const NotesProvider = ({children}) =>{
+    
     const [notes, changeNotes] = React.useState([]);
     const [note_id,change_note_id] = React.useState(0);
     const [signup, changeSignUp] = React.useState(true);
-
-    function removesignup(){
-        changeSignUp(false)
-    }
+    
     async function deleteANote(id){
         const obj={id:id}
         try{
@@ -52,14 +50,14 @@ export const NotesProvider = ({children}) =>{
         }
     }
     
-      function deleteNote(id) {
+    function deleteNote(id) {
         changeNotes((prevItems) => {
             return prevItems.filter((item, index) => {
             return (item.note_id) !== id;
             });
         });
         deleteANote(id);
-      }
+    }
 
     return (
         <NotesContext.Provider value={{
@@ -72,7 +70,6 @@ export const NotesProvider = ({children}) =>{
             changeNotes,
             change_note_id,
             changeSignUp,
-            removesignup
         }}>
             {children}
         </NotesContext.Provider>
