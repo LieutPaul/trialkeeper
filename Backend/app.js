@@ -11,6 +11,7 @@ app.use(express.urlencoded({extended:false}));
 app.use(express.json());
 app.use(cors());
 
+var globalUser=null;
 mongoose.connect("mongodb://localhost:27017/keeperDB",{useNewURLParser:true});
 
 const noteSchema = new mongoose.Schema({
@@ -42,6 +43,7 @@ function authenticateToken(req,res,next) { //MiddleWare to check if token is val
             res.sendStatus(403); //Invalid Token => No Access
         }
         req.user = user;
+        globalUser = user;
         next();
     })
 }
@@ -86,7 +88,8 @@ app.get("/getNotes",authenticateToken,(req,res)=>{
 })
 
 
-app.get("/postNote", authenticateToken,(req,res) => {
+app.post("/postNote",(req,res) => {
+    console.log(globalUser)
     console.log(req.body)
     res.send("Added")
 });

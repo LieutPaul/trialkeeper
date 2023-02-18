@@ -25,6 +25,7 @@ export default function Header() {
             changeSignUp(true);
             localStorage.removeItem("jwt")
             navigate("/");
+            // Post request to backend to remove globalUser
           }}>Logout</h1>
         }
       

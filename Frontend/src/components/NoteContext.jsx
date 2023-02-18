@@ -25,21 +25,7 @@ export const NotesProvider = ({children}) =>{
         }
     }
     
-    async function postNote(obj){
-        console.log("Posting Note")
-        try{
-            const response = await axios.get("http://localhost:4000/postNote" , {
-                obj,
-                headers:{
-                    'Authorization' : 'Bearer ' + localStorage.getItem("jwt")
-                }
-            })
-        }catch(error){
-            console.log(error);
-        }
-    }
-    
-      function addToNotes(t,c,id) {
+    async function addToNotes(t,c,id) {
         if(localStorage.getItem("jwt")){
             changeNotes((prevValue) => {
                 return [
@@ -53,14 +39,18 @@ export const NotesProvider = ({children}) =>{
             
             change_note_id(note_id+1);
             console.log("Adding to Notes")
-            postNote({
+            const note = {
                 note_id:id,
                 title:t,
                 content:c
+            };
+            const response = await axios.post("http://localhost:4000/postNote" , {
+                note,
             })
-        }
+            console.log(response)
 
-      }
+        }
+    }
     
       function deleteNote(id) {
         changeNotes((prevItems) => {
