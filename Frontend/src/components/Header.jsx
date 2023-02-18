@@ -2,6 +2,7 @@ import React from "react";
 import {Link} from "react-router-dom";
 import { useNotes } from "./NoteContext";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios'
 export default function Header() {
   const navigate = useNavigate();
   const {signup,changeSignUp} = useNotes();
@@ -21,11 +22,15 @@ export default function Header() {
         }
 
         {!signup &&
-          <h1 style={{"float":"right","cursor": "pointer"}} onClick={()=>{
+          <h1 style={{"float":"right","cursor": "pointer"}} onClick={async ()=>{
             changeSignUp(true);
-            localStorage.removeItem("jwt")
             navigate("/");
-            // Post request to backend to remove globalUser
+            const response=await axios.post("http://localhost:4000/logout" , {},{
+                headers:{
+                    'Authorization' : 'Bearer ' + localStorage.getItem("jwt")
+                }
+            })
+            localStorage.removeItem("jwt")
           }}>Logout</h1>
         }
       

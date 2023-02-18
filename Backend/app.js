@@ -33,6 +33,7 @@ function authenticateToken(req,res,next) { //MiddleWare to check if token is val
     //Header - Bearer TOKEN
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1];
+    req.token=token
     console.log("Token is "+token)
     if(token==null){
         return res.sendStatus(401);
@@ -88,13 +89,16 @@ app.get("/getNotes",authenticateToken,(req,res)=>{
 })
 
 
-app.post("/postNote",(req,res) => {
-    console.log(globalUser)
-    console.log(req.body)
+app.post("/postNote",authenticateToken,(req,res) => {
+    const note = req.body.note;
+    console.log(note,req.user)
     res.send("Added")
 });
 
-
+app.post("/logout",authenticateToken,(req,res)=>{
+    console.log("Log out token - "+req.token)
+    res.send("Logged out user")
+})
 app.post("/deleteANote",(req,res)=>{
     noteid=req.body.obj.id;
     console.log(noteid);
