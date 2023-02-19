@@ -11,7 +11,6 @@ app.use(express.urlencoded({extended:false}));
 app.use(express.json());
 app.use(cors());
 
-var globalUser=null;
 mongoose.connect("mongodb://localhost:27017/keeperDB",{useNewURLParser:true});
 
 const noteSchema = new mongoose.Schema({
