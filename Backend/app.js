@@ -48,7 +48,6 @@ function authenticateToken(req,res,next) { //MiddleWare to check if token is val
     })
 }
 
-
 app.post("/signup", (req,res) =>{
     console.log(req.body);
     const userFromFrontEnd = req.body.obj;
@@ -102,20 +101,17 @@ app.post("/login", (req,res)=>{
     });
 })
 
-
 app.get("/getNotes",authenticateToken,(req,res)=>{
     User_model.findOne({username : req.user.user.username},(err,foundUser)=>{
         if(err){
             console.log(err);
         }else{
             if(foundUser){
-                console.log(foundUser)
                 res.json(foundUser)
             }
         }
     });
 })
-
 
 app.post("/postNote",authenticateToken,(req,res) => {
     const note = req.body.note;
@@ -134,14 +130,30 @@ app.post("/postNote",authenticateToken,(req,res) => {
     res.send("Added")
 });
 
+app.post("/deleteANote",authenticateToken,(req,res)=>{
+    User_model.findOne({username : req.user.user.username},(err,foundUser)=>{
+        if(err){
+            console.log(err);
+        }else{
+            if(foundUser){
+                const id = req.body.obj.id
+                foundUser.notes=foundUser.notes.filter((item) => {
+                    return (item.note_id) !== id;
+                });
+                console.log(foundUser);
+                foundUser.save();
+                res.send("Deleted")
+            }
+        }
+    });
+});
+
 app.post("/logout",authenticateToken,(req,res)=>{
     console.log("Log out token - " + req.token)
     res.send("Logged out user")
 });
 
-app.post("/deleteANote",authenticateToken,(req,res)=>{
-    console.log(req.body.obj);
-});
+
 app.listen(4000,()=>{
     console.log("Listening on 4000");
 })
