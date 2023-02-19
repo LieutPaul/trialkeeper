@@ -81,6 +81,26 @@ app.post("/signup", (req,res) =>{
 
 app.post("/login", (req,res)=>{
     console.log(req.body.obj);
+    const userFromFrontEnd = req.body.obj;
+    User_model.findOne({username: userFromFrontEnd.username }, (err, user) => {
+        if(err){
+            console.log(err)
+            res.send(false);
+        }
+        else{
+            if(user){
+                if(user.password === userFromFrontEnd.password){
+                    jwt.sign({user},process.env.ACCESS_TOKEN_SECRET,(err,token)=>{
+                        res.send(token);
+                    })
+                }else{
+                    res.send("Wrong Password")
+                }
+            }else{
+                res.send(false);
+            }
+        }
+    });
 })
 
 
