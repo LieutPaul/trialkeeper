@@ -85,13 +85,33 @@ app.post("/login", (req,res)=>{
 
 
 app.get("/getNotes",authenticateToken,(req,res)=>{
-    res.send(req.user)
+    User_model.findOne({username : req.user.user.username},(err,foundUser)=>{
+        if(err){
+            console.log(err);
+        }else{
+            if(foundUser){
+                console.log(foundUser)
+                res.json(foundUser)
+            }
+        }
+    });
 })
 
 
 app.post("/postNote",authenticateToken,(req,res) => {
     const note = req.body.note;
-    console.log(note,req.user)
+    // console.log(note,req.user)
+    User_model.findOne({username : req.user.user.username},(err,foundUser)=>{
+        if(err){
+            console.log(err);
+        }else{
+            console.log(foundUser)
+            if(foundUser){
+                foundUser.notes.push(note);
+                foundUser.save();
+            }
+        }
+    });
     res.send("Added")
 });
 

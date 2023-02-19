@@ -16,7 +16,7 @@ function App() {
             'Authorization' : 'Bearer ' + localStorage.getItem("jwt")
           }
         });
-        const user=response.data.user;
+        const user=response.data;
         changeSignUp(false);
         var max_id=0;
         if(user.notes.length>0){

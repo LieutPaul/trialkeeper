@@ -42,12 +42,11 @@ export const NotesProvider = ({children}) =>{
                 title:t,
                 content:c
             };
-            const response = await axios.post("http://localhost:4000/postNote" , {note},{
+            await axios.post("http://localhost:4000/postNote" , {note},{
                 headers:{
                     'Authorization' : 'Bearer ' + localStorage.getItem("jwt")
                 }
             })
-            console.log(response)
 
         }
     }
