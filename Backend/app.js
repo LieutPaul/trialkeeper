@@ -1,6 +1,7 @@
 require('dotenv').config()
 const express=require('express');
 const cors=require('cors');
+const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
 const mongoose=require('mongoose');
 mongoose.set('strictQuery', false);
@@ -27,13 +28,12 @@ const UserSchema = new mongoose.Schema({
 
 const User_model = new mongoose.model("User",UserSchema);
 
-
-function authenticateToken(req,res,next) { //MiddleWare to check if token is valid
+function authenticateToken(req,res,next) { //MiddleWare to check if JWT is valid
     //Header - Bearer TOKEN
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1];
     req.token=token
-    console.log("Token is "+token)
+    // console.log("Token is "+token)
     if(token==null){
         return res.sendStatus(401);
     }
@@ -43,14 +43,14 @@ function authenticateToken(req,res,next) { //MiddleWare to check if token is val
             res.sendStatus(403); //Invalid Token => No Access
         }
         req.user = user;
-        globalUser = user;
         next();
     })
 }
 
-app.post("/signup", (req,res) =>{
-    console.log(req.body);
+app.post("/signup", async (req,res) =>{
+    // console.log(req.body);
     const userFromFrontEnd = req.body.obj;
+    const hashedPassword = await bcrypt.hash(userFromFrontEnd.password,10);
     
     User_model.findOne({username: userFromFrontEnd.username }, (err, docs) => {
         if(err){
@@ -64,7 +64,7 @@ app.post("/signup", (req,res) =>{
             }else{
                 var user = new User_model({
                     username:userFromFrontEnd.username,
-                    password:userFromFrontEnd.password,
+                    password:hashedPassword,
                     notes:[]
                 });
                 user.save();
@@ -77,23 +77,29 @@ app.post("/signup", (req,res) =>{
     });
 });
 
-app.post("/login", (req,res)=>{
-    console.log(req.body.obj);
+app.post("/login", async (req,res)=>{
+    // console.log(req.body.obj);
     const userFromFrontEnd = req.body.obj;
     User_model.findOne({username: userFromFrontEnd.username }, (err, user) => {
         if(err){
             console.log(err)
-            res.send(false);
+            res.send(false); // No user with given username
         }
         else{
             if(user){
-                if(user.password === userFromFrontEnd.password){
-                    jwt.sign({user},process.env.ACCESS_TOKEN_SECRET,(err,token)=>{
-                        res.send(token);
-                    })
-                }else{
-                    res.send("Wrong Password")
-                }
+                bcrypt.compare(userFromFrontEnd.password, user.password, (err, data) => {
+                    if(err){
+                        console.log(err);
+                        res.send(false);
+                    }
+                    if(data){
+                        jwt.sign({user},process.env.ACCESS_TOKEN_SECRET,(err,token)=>{
+                            res.send(token);
+                        })
+                    }else{
+                        res.send("Wrong Password")
+                    }
+                });
             }else{
                 res.send(false);
             }
@@ -120,7 +126,7 @@ app.post("/postNote",authenticateToken,(req,res) => {
         if(err){
             console.log(err);
         }else{
-            console.log(foundUser)
+            // console.log(foundUser)
             if(foundUser){
                 foundUser.notes.push(note);
                 foundUser.save();
@@ -140,7 +146,7 @@ app.post("/deleteANote",authenticateToken,(req,res)=>{
                 foundUser.notes=foundUser.notes.filter((item) => {
                     return (item.note_id) !== id;
                 });
-                console.log(foundUser);
+                // console.log(foundUser);
                 foundUser.save();
                 res.send("Deleted")
             }
@@ -149,7 +155,7 @@ app.post("/deleteANote",authenticateToken,(req,res)=>{
 });
 
 app.post("/logout",authenticateToken,(req,res)=>{
-    console.log("Log out token - " + req.token)
+    // console.log("Log out token - " + req.token)
     res.send("Logged out user")
 });
 
