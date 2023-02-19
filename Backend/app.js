@@ -136,13 +136,12 @@ app.post("/postNote",authenticateToken,(req,res) => {
 });
 
 app.post("/logout",authenticateToken,(req,res)=>{
-    console.log("Log out token - "+req.token)
+    console.log("Log out token - " + req.token)
     res.send("Logged out user")
-})
-app.post("/deleteANote",(req,res)=>{
-    noteid=req.body.obj.id;
-    console.log(noteid);
-    
+});
+
+app.post("/deleteANote",authenticateToken,(req,res)=>{
+    console.log(req.body.obj);
 });
 app.listen(4000,()=>{
     console.log("Listening on 4000");

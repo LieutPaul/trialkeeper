@@ -24,13 +24,13 @@ export default function Header() {
         {!signup &&
           <h1 style={{"float":"right","cursor": "pointer"}} onClick={async ()=>{
             changeSignUp(true);
-            navigate("/");
-            const response=await axios.post("http://localhost:4000/logout" , {},{
+            await axios.post("http://localhost:4000/logout" , {}, {
                 headers:{
                     'Authorization' : 'Bearer ' + localStorage.getItem("jwt")
                 }
             })
             localStorage.removeItem("jwt")
+            navigate("/");
           }}>Logout</h1>
         }
       

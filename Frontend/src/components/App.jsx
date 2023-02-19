@@ -29,6 +29,8 @@ function App() {
           // The first new note will have an ID one more than the max id of previous notes.
         }
         change_note_id(max_id+1);
+    }else{
+      changeNotes([])
     }
   }
   React.useEffect(()=>{

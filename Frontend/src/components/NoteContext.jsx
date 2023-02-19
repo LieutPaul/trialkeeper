@@ -12,17 +12,6 @@ export const NotesProvider = ({children}) =>{
     const [note_id,change_note_id] = React.useState(0);
     const [signup, changeSignUp] = React.useState(true);
     
-    async function deleteANote(id){
-        const obj={id:id}
-        try{
-            await axios.post("http://localhost:4000/deleteANote" , {
-                obj
-            })
-        }catch(error){
-            console.log(error);
-        }
-    }
-    
     async function addToNotes(t,c,id) {
         if(localStorage.getItem("jwt")){
             changeNotes((prevValue) => {
@@ -42,7 +31,7 @@ export const NotesProvider = ({children}) =>{
                 title:t,
                 content:c
             };
-            await axios.post("http://localhost:4000/postNote" , {note},{
+            await axios.post("http://localhost:4000/postNote" , {note}, {
                 headers:{
                     'Authorization' : 'Bearer ' + localStorage.getItem("jwt")
                 }
@@ -51,20 +40,29 @@ export const NotesProvider = ({children}) =>{
         }
     }
     
-    function deleteNote(id) {
+    async function deleteNote(id) {
         changeNotes((prevItems) => {
             return prevItems.filter((item, index) => {
-            return (item.note_id) !== id;
+                return (item.note_id) !== id;
             });
         });
-        deleteANote(id);
+        const obj={id:id}
+        try{
+            await axios.post("http://localhost:4000/deleteANote" , {obj}, {
+                headers:{
+                    'Authorization' : 'Bearer ' + localStorage.getItem("jwt")
+                }
+            })
+        }catch(error){
+            console.log(error);
+        }
+
     }
 
     return (
         <NotesContext.Provider value={{
             note_id,
             notes,
-            deleteANote,
             addToNotes,
             deleteNote,
             signup,
